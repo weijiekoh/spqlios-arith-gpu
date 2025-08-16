@@ -50,6 +50,14 @@ pub fn create_sb_with_data<T: bytemuck::NoUninit>(
     })
 }
 
+pub fn create_ub_with_data(device: &wgpu::Device, data: &[u32]) -> wgpu::Buffer {
+    device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: None,
+        contents: bytemuck::cast_slice(data),
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+    })
+}
+
 pub fn create_empty_sb(device: &wgpu::Device, size: u64) -> wgpu::Buffer {
     device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
@@ -85,9 +93,9 @@ pub fn execute_pipeline(
     command_encoder: &mut wgpu::CommandEncoder,
     compute_pipeline: &wgpu::ComputePipeline,
     bind_group: &wgpu::BindGroup,
-    num_x_workgroups: u32,
-    num_y_workgroups: u32,
-    num_z_workgroups: u32,
+    num_x_workgroups: usize,
+    num_y_workgroups: usize,
+    num_z_workgroups: usize,
 ) {
     let mut cpass = command_encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
         label: None,
@@ -96,7 +104,7 @@ pub fn execute_pipeline(
     cpass.set_pipeline(compute_pipeline);
     cpass.set_bind_group(0, bind_group, &[]);
     cpass.insert_debug_marker("debug marker");
-    cpass.dispatch_workgroups(num_x_workgroups, num_y_workgroups, num_z_workgroups);
+    cpass.dispatch_workgroups(num_x_workgroups as u32, num_y_workgroups as u32, num_z_workgroups as u32);
 }
 
 pub fn create_bind_group(

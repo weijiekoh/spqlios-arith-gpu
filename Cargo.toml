@@ -3,9 +3,14 @@ name = "spqlios-arith-gpu"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "read_benchmark_data"
+path = "src/read_benchmark_data.rs"
+
 [dependencies]
 bytemuck = "1.23.2"
 futures-intrusive = "0.5.0"
 minijinja = "2.11.0"
+stopwatch = "0.0.7"
 tokio = { version = "1.47.1", features = ["full"] }
 wgpu = "26.0.1"
